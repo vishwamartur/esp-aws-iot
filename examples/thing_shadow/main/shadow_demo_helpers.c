@@ -832,6 +832,7 @@ int32_t EstablishMqttSession( MQTTEventCallback_t eventCallback )
                 {
                     returnStatus = EXIT_FAILURE;
                     LogError( ( "Connection with MQTT broker failed with status %u.", mqttStatus ) );
+                    xTlsDisconnect( pNetworkContext );
                 }
                 else
                 {
