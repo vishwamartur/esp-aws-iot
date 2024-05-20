@@ -18,7 +18,7 @@ This SDK enables AWS IoT cloud connectivity with ESP32-based platforms using the
   ```
 - Please refer to https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html for setting up ESP-IDF
   - ESP-IDF can be downloaded from https://github.com/espressif/esp-idf/
-  - This SDK supports `release/v5.1`, `release/v5.0`, `release/v4.4` and `release/v4.3` of ESP-IDF.
+  - This SDK supports `release/v5.2`, `release/v5.1`, `release/v5.0`, `release/v4.4` and `release/v4.3` of ESP-IDF.
   - Please set your branch to the IDF release that you would like to use, and pull in the latest changes.
   > **Note**: Please read [Support Policy](#support-policy) below for more details.
 - Please refer to the [example README](examples/README.md) for more information on setting up examples.
@@ -49,7 +49,7 @@ The following table shows esp-aws-iot support with the ESP-IDF support of Espres
 </thead>
 <tbody>
    <tr align="center">
-    <td rowspan="4">ESP32</td>
+    <td rowspan="5">ESP32</td>
     <td>IDF v4.3</td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
@@ -74,7 +74,13 @@ The following table shows esp-aws-iot support with the ESP-IDF support of Espres
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
   </tr>
    <tr align="center">
-    <td rowspan="4">ESP32-S2</td>
+    <td>IDF v5.2</td>
+    <td></td>
+    <td></td>
+    <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
+  </tr>
+   <tr align="center">
+    <td rowspan="5">ESP32-S2</td>
     <td>IDF v4.3</td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
@@ -98,8 +104,14 @@ The following table shows esp-aws-iot support with the ESP-IDF support of Espres
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
   </tr>
+  <tr align="center">
+    <td>IDF v5.2</td>
+    <td></td>
+    <td></td>
+    <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
+  </tr>
    <tr align="center">
-    <td rowspan="4">ESP32-C3</td>
+    <td rowspan="5">ESP32-C3</td>
     <td>IDF v4.3</td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
@@ -123,8 +135,14 @@ The following table shows esp-aws-iot support with the ESP-IDF support of Espres
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
   </tr>
+  <tr align="center">
+    <td>IDF v5.2</td>
+    <td></td>
+    <td></td>
+    <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
+  </tr>
    <tr align="center">
-    <td rowspan="3">ESP32-S3</td>
+    <td rowspan="4">ESP32-S3</td>
     <td>IDF v4.4</td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
@@ -142,8 +160,14 @@ The following table shows esp-aws-iot support with the ESP-IDF support of Espres
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
   </tr>
+  <tr align="center">
+    <td>IDF v5.2</td>
+    <td></td>
+    <td></td>
+    <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
+  </tr>
    <tr align="center">
-    <td rowspan="2">ESP32-C2</td>
+    <td rowspan="3">ESP32-C2</td>
     <td>IDF v5.0</td>
     <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
@@ -155,11 +179,23 @@ The following table shows esp-aws-iot support with the ESP-IDF support of Espres
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
   </tr>
+  <tr align="center">
+    <td>IDF v5.2</td>
+    <td></td>
+    <td></td>
+    <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
+  </tr>
    <tr align="center">
-    <td>ESP32-C6</td>
+    <td rowspan="2">ESP32-C6</td>
     <td>IDF v5.1</td>
     <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
+    <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
+  </tr>
+  <tr align="center">
+    <td>IDF v5.2</td>
+    <td></td>
+    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
   </tr>
 </tbody>
