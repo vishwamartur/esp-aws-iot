@@ -40,6 +40,45 @@ extern "C"
 #endif
 
 /**
+ * @brief The OTA platform interface return status. Composed of main and sub status.
+ */
+typedef uint32_t   OtaPalStatus_t;
+
+/**
+ * @ingroup ota_constants
+ * @brief The OTA platform interface main status.
+ */
+#define    OtaPalSuccess                 0x0U   /*!< @brief OTA platform interface success. */
+#define    OtaPalUninitialized           0xe0U  /*!< @brief Result is not yet initialized from PAL. */
+#define    OtaPalOutOfMemory             0xe1U  /*!< @brief Out of memory. */
+#define    OtaPalNullFileContext         0xe2U  /*!< @brief The PAL is called with a NULL file context. */
+#define    OtaPalSignatureCheckFailed    0xe3U  /*!< @brief The signature check failed for the specified file. */
+#define    OtaPalRxFileCreateFailed      0xe4U  /*!< @brief The PAL failed to create the OTA receive file. */
+#define    OtaPalRxFileTooLarge          0xe5U  /*!< @brief The OTA receive file is too big for the platform to support. */
+#define    OtaPalBootInfoCreateFailed    0xe6U  /*!< @brief The PAL failed to create the OTA boot info file. */
+#define    OtaPalBadSignerCert           0xe7U  /*!< @brief The signer certificate was not readable or zero length. */
+#define    OtaPalBadImageState           0xe8U  /*!< @brief The specified OTA image state was out of range. */
+#define    OtaPalAbortFailed             0xe9U  /*!< @brief Error trying to abort the OTA. */
+#define    OtaPalRejectFailed            0xeaU  /*!< @brief Error trying to reject the OTA image. */
+#define    OtaPalCommitFailed            0xebU  /*!< @brief The acceptance commit of the new OTA image failed. */
+#define    OtaPalActivateFailed          0xecU  /*!< @brief The activation of the new OTA image failed. */
+#define    OtaPalFileAbort               0xedU  /*!< @brief Error in low level file abort. */
+#define    OtaPalFileClose               0xeeU  /*!< @brief Error in low level file close. */
+
+/**
+ * @ingroup ota_enum_types
+ * @brief OTA PAL job document processing result.
+ */
+typedef enum OtaPalJobDocProcessingResult
+{
+    OtaPalJobDocFileCreated = 0,
+	OtaPalJobDocFileCreateFailed,
+    OtaPalNewImageBooted,
+    OtaPalNewImageBootFailed,
+    OtaPalJobDocProcessingStateInvalid
+} OtaPalJobDocProcessingResult_t;
+
+/**
  * @brief Abort an OTA transfer.
  *
  * Aborts access to an existing open file represented by the OTA file context pFileContext. This is
