@@ -1,13 +1,8 @@
 menu "AWS OTA"
 
-    config LOG2_FILE_BLOCK_SIZE
-        int "Log base 2 of the size of the file data block message (excluding the header). 10 bits yields a data block size of 1KB."
-        default 12
-        range 1 4294967295
-
     config MAX_NUM_BLOCKS_REQUEST
         int "The maximum number of data blocks requested from OTA streaming service."
-        default 8
+        default 1
         range 1 4294967295
         help
             This configuration parameter is sent with data requests and represents the maximum number of
@@ -19,7 +14,7 @@ menu "AWS OTA"
 
     config MAX_NUM_OTA_DATA_BUFFERS
         int "The number of data buffers reserved by the OTA agent."
-        default 10
+        default 2
         range 1 4294967295
         help
             This configurations parameter sets the maximum number of static data buffers used by

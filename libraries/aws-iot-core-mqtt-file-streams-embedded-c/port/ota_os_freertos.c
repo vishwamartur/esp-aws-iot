@@ -34,9 +34,7 @@
 /* OTA OS POSIX Interface Includes.*/
 #include "ota_os_freertos.h"
 
-/* OTA Library include. */
-#include "ota.h"
-#include "ota_private.h"
+#include "ota_config.h"
 
 /* OTA Event queue attributes.*/
 #define MAX_MESSAGES    20
@@ -51,22 +49,23 @@ static StaticQueue_t staticQueue;
 /* The queue control handle.  .*/
 static QueueHandle_t otaEventQueue;
 
-/* OTA App Timer callback.*/
-static OtaTimerCallback_t otaTimerCallback;
+#if 0
+    /* OTA App Timer callback.*/
+    static OtaTimerCallback_t otaTimerCallback;
 
-/* OTA Timer handles.*/
-static TimerHandle_t otaTimer[ OtaNumOfTimers ];
+    /* OTA Timer handles.*/
+    static TimerHandle_t otaTimer[ OtaNumOfTimers ];
+
 
 /* OTA Timer callbacks.*/
 static void requestTimerCallback( TimerHandle_t T );
 static void selfTestTimerCallback( TimerHandle_t T );
 void ( * timerCallback[ OtaNumOfTimers ] )( TimerHandle_t T ) = { requestTimerCallback, selfTestTimerCallback };
+#endif
 
-OtaOsStatus_t OtaInitEvent_FreeRTOS( OtaEventContext_t * pEventCtx )
+OtaOsStatus_t OtaInitEvent_FreeRTOS( void )
 {
     OtaOsStatus_t otaOsStatus = OtaOsSuccess;
-
-    ( void ) pEventCtx;
 
     otaEventQueue = xQueueCreateStatic( ( UBaseType_t ) MAX_MESSAGES,
                                         ( UBaseType_t ) MAX_MSG_SIZE,
@@ -90,15 +89,10 @@ OtaOsStatus_t OtaInitEvent_FreeRTOS( OtaEventContext_t * pEventCtx )
     return otaOsStatus;
 }
 
-OtaOsStatus_t OtaSendEvent_FreeRTOS( OtaEventContext_t * pEventCtx,
-                                     const void * pEventMsg,
-                                     unsigned int timeout )
+OtaOsStatus_t OtaSendEvent_FreeRTOS( const void * pEventMsg )
 {
     OtaOsStatus_t otaOsStatus = OtaOsSuccess;
     BaseType_t retVal = pdFALSE;
-
-    ( void ) pEventCtx;
-    ( void ) timeout;
 
     /* Send the event to OTA event queue.*/
     retVal = xQueueSendToBack( otaEventQueue, pEventMsg, ( TickType_t ) 0 );
@@ -120,18 +114,13 @@ OtaOsStatus_t OtaSendEvent_FreeRTOS( OtaEventContext_t * pEventCtx,
     return otaOsStatus;
 }
 
-OtaOsStatus_t OtaReceiveEvent_FreeRTOS( OtaEventContext_t * pEventCtx,
-                                        void * pEventMsg,
-                                        uint32_t timeout )
+OtaOsStatus_t OtaReceiveEvent_FreeRTOS( void * pEventMsg )
 {
     OtaOsStatus_t otaOsStatus = OtaOsSuccess;
     BaseType_t retVal = pdFALSE;
 
     /* Temp buffer.*/
     uint8_t buff[ sizeof( OtaEventMsg_t ) ];
-
-    ( void ) pEventCtx;
-    ( void ) timeout;
 
     retVal = xQueueReceive( otaEventQueue, &buff, portMAX_DELAY );
 
@@ -154,11 +143,9 @@ OtaOsStatus_t OtaReceiveEvent_FreeRTOS( OtaEventContext_t * pEventCtx,
     return otaOsStatus;
 }
 
-OtaOsStatus_t OtaDeinitEvent_FreeRTOS( OtaEventContext_t * pEventCtx )
+OtaOsStatus_t OtaDeinitEvent_FreeRTOS( void )
 {
     OtaOsStatus_t otaOsStatus = OtaOsSuccess;
-
-    ( void ) pEventCtx;
 
     /* Remove the event queue.*/
     if( otaEventQueue != NULL )
@@ -171,6 +158,7 @@ OtaOsStatus_t OtaDeinitEvent_FreeRTOS( OtaEventContext_t * pEventCtx )
     return otaOsStatus;
 }
 
+#if 0
 static void selfTestTimerCallback( TimerHandle_t T )
 {
     ( void ) T;
@@ -347,6 +335,7 @@ OtaOsStatus_t OtaDeleteTimer_FreeRTOS( OtaTimerId_t otaTimerId )
 
     return otaOsStatus;
 }
+#endif
 
 void * Malloc_FreeRTOS( size_t size )
 {

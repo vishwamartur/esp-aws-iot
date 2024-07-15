@@ -33,8 +33,7 @@
 #include <stdint.h>
 #include <string.h>
 
-/* OTA library interface include. */
-#include "ota_os_interface.h"
+#include "ota_config.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -42,15 +41,101 @@ extern "C"
 #endif
 
 /**
+ * @ingroup ota_enum_types
+ * @brief The OTA OS interface return status.
+ */
+typedef enum OtaOsStatus
+{
+    OtaOsSuccess = 0, /*!< @brief OTA OS interface success. */
+    OtaOsEventQueueCreateFailed = 0x80U, /*!< @brief Failed to create the event
+                                            queue. */
+    OtaOsEventQueueSendFailed,    /*!< @brief Posting event message to the event
+                                     queue failed. */
+    OtaOsEventQueueReceiveFailed, /*!< @brief Failed to receive from the event
+                                     queue. */
+    OtaOsEventQueueDeleteFailed,  /*!< @brief Failed to delete the event queue.
+                                   */
+} OtaOsStatus_t;
+
+typedef enum OtaEvent
+{
+    OtaAgentEventStart = 0,           /*!< @brief Start the OTA state machine */
+    OtaAgentEventRequestJobDocument,  /*!< @brief Event for requesting job document. */
+    OtaAgentEventReceivedJobDocument, /*!< @brief Event when job document is received. */
+    OtaAgentEventCreateFile,          /*!< @brief Event to create a file. */
+    OtaAgentEventRequestFileBlock,    /*!< @brief Event to request file blocks. */
+    OtaAgentEventReceivedFileBlock,   /*!< @brief Event to trigger when file block is received. */
+    OtaAgentEventCloseFile,           /*!< @brief Event to trigger closing file. */
+	OtaAgentEventActivateImage,       /*!< @brief Event to activate the new image. */
+    OtaAgentEventSuspend,             /*!< @brief Event to suspend ota task */
+    OtaAgentEventResume,              /*!< @brief Event to resume suspended task */
+    OtaAgentEventUserAbort,           /*!< @brief Event triggered by user to stop agent. */
+    OtaAgentEventShutdown,            /*!< @brief Event to trigger ota shutdown */
+    OtaAgentEventMax                  /*!< @brief Last event specifier */
+} OtaEvent_t;
+
+typedef struct OtaDataEvent
+{
+    uint8_t data[ OTA_DATA_BLOCK_SIZE * 2 ]; /*!< Buffer for storing event information. */
+    size_t dataLength;                 /*!< Total space required for the event. */
+    bool bufferUsed;                     /*!< Flag set when buffer is used otherwise cleared. */
+} OtaDataEvent_t;
+
+typedef struct OtaJobEventData
+{
+    uint8_t jobData[ JOB_DOC_SIZE ];
+    size_t jobDataLength;
+} OtaJobEventData_t;
+
+typedef struct OtaEventMsg
+{
+    OtaDataEvent_t * dataEvent; /*!< Data Event message. */
+    OtaJobEventData_t * jobEvent; /*!< Job Event message. */
+    OtaEvent_t eventId;          /*!< Identifier for the event. */
+} OtaEventMsg_t;
+
+/**
+ * @brief Application version structure.
+ */
+typedef struct
+{
+    /* MISRA Ref 19.2.1 [Unions] */
+    /* More details at: https://github.com/aws/ota-for-aws-iot-embedded-sdk/blob/main/MISRA.md#rule-192 */
+    /* coverity[misra_c_2012_rule_19_2_violation] */
+    union
+    {
+        #if ( defined( __BYTE_ORDER__ ) && defined( __ORDER_LITTLE_ENDIAN__ ) && ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ ) ) || ( __little_endian__ == 1 ) || WIN32 || ( __BYTE_ORDER == __LITTLE_ENDIAN )
+            struct version
+            {
+                uint16_t build; /*!< @brief Build of the firmware (Z in firmware version Z.Y.X). */
+                uint8_t minor;  /*!< @brief Minor version number of the firmware (Y in firmware version Z.Y.X). */
+
+                uint8_t major;  /*!< @brief Major version number of the firmware (X in firmware version Z.Y.X). */
+            } x;                /*!< @brief Version number of the firmware. */
+        #elif ( defined( __BYTE_ORDER__ ) && defined( __ORDER_BIG_ENDIAN__ ) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ ) || ( __big_endian__ == 1 ) || ( __BYTE_ORDER == __BIG_ENDIAN )
+            struct version
+            {
+                uint8_t major;  /*!< @brief Major version number of the firmware (X in firmware version X.Y.Z). */
+                uint8_t minor;  /*!< @brief Minor version number of the firmware (Y in firmware version X.Y.Z). */
+
+                uint16_t build; /*!< @brief Build of the firmware (Z in firmware version X.Y.Z). */
+            } x;                /*!< @brief Version number of the firmware. */
+        #else /* if ( defined( __BYTE_ORDER__ ) && defined( __ORDER_LITTLE_ENDIAN__ ) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ ) || ( __little_endian__ == 1 ) || WIN32 || ( __BYTE_ORDER == __LITTLE_ENDIAN ) */
+        #error "Unable to determine byte order!"
+        #endif /* if ( defined( __BYTE_ORDER__ ) && defined( __ORDER_LITTLE_ENDIAN__ ) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ ) || ( __little_endian__ == 1 ) || WIN32 || ( __BYTE_ORDER == __LITTLE_ENDIAN ) */
+        uint32_t unsignedVersion32;
+        int32_t signedVersion32;
+    } u; /*!< @brief Version based on configuration in big endian or little endian. */
+} AppVersion32_t;
+
+/**
  * @brief Initialize the OTA events.
  *
  * This function initializes the OTA events mechanism for freeRTOS platforms.
  *
- * @param[pEventCtx]     Pointer to the OTA event context.
- *
  * @return               OtaOsStatus_t, OtaOsSuccess if success , other error code on failure.
  */
-OtaOsStatus_t OtaInitEvent_FreeRTOS( OtaEventContext_t * pEventCtx );
+OtaOsStatus_t OtaInitEvent_FreeRTOS( void );
 
 /**
  * @brief Sends an OTA event.
@@ -65,9 +150,7 @@ OtaOsStatus_t OtaInitEvent_FreeRTOS( OtaEventContext_t * pEventCtx );
  *
  * @return               OtaOsStatus_t, OtaOsSuccess if success , other error code on failure.
  */
-OtaOsStatus_t OtaSendEvent_FreeRTOS( OtaEventContext_t * pEventCtx,
-                                     const void * pEventMsg,
-                                     unsigned int timeout );
+OtaOsStatus_t OtaSendEvent_FreeRTOS( const void * pEventMsg );
 
 /**
  * @brief Receive an OTA event.
@@ -82,9 +165,7 @@ OtaOsStatus_t OtaSendEvent_FreeRTOS( OtaEventContext_t * pEventCtx,
  *
  * @return               OtaOsStatus_t, OtaOsSuccess if success , other error code on failure.
  */
-OtaOsStatus_t OtaReceiveEvent_FreeRTOS( OtaEventContext_t * pEventCtx,
-                                        void * pEventMsg,
-                                        uint32_t timeout );
+OtaOsStatus_t OtaReceiveEvent_FreeRTOS( void * pEventMsg );
 
 /**
  * @brief Deinitialize the OTA Events mechanism.
@@ -96,9 +177,9 @@ OtaOsStatus_t OtaReceiveEvent_FreeRTOS( OtaEventContext_t * pEventCtx,
  *
  * @return               OtaOsStatus_t, OtaOsSuccess if success , other error code on failure.
  */
-OtaOsStatus_t OtaDeinitEvent_FreeRTOS( OtaEventContext_t * pEventCtx );
+OtaOsStatus_t OtaDeinitEvent_FreeRTOS( void );
 
-
+#if 0
 /**
  * @brief Start timer.
  *
@@ -140,6 +221,7 @@ OtaOsStatus_t OtaStopTimer_FreeRTOS( OtaTimerId_t otaTimerId );
  * @return                  OtaOsStatus_t, OtaOsSuccess if success , other error code on failure.
  */
 OtaOsStatus_t OtaDeleteTimer_FreeRTOS( OtaTimerId_t otaTimerId );
+#endif
 
 /**
  * @brief Allocate memory.

@@ -29,6 +29,11 @@
 #define OTA_CONFIG_H_
 
 #include "sdkconfig.h"
+#include "MQTTFileDownloader.h"
+
+#define OTA_DATA_BLOCK_SIZE ( mqttFileDownloader_CONFIG_BLOCK_SIZE )
+#define JOB_DOC_SIZE        ( 2048U )
+
 #define EXTRACT_ARGS( ... ) __VA_ARGS__
 #define STRIP_PARENS( X ) X
 #define REMOVE_PARENS( X ) STRIP_PARENS( EXTRACT_ARGS X )
@@ -72,28 +77,29 @@
 /* Define logging macros based on configurations in sdkconfig.h. */
 #if CONFIG_AWS_OTA_LOG_ERROR
     #define LogError( message, ... ) ESP_LOGE( LIBRARY_LOG_NAME, REMOVE_PARENS( message ), ##__VA_ARGS__ )
+#else
+    #define LogError( message, ... )
 #endif
 
 #if CONFIG_AWS_OTA_LOG_WARN
     #define LogWarn( message, ... ) ESP_LOGW( LIBRARY_LOG_NAME, REMOVE_PARENS( message ), ##__VA_ARGS__ )
+#else
+    #define LogWarn( message, ... )
 #endif
 
 #if CONFIG_AWS_OTA_LOG_INFO
     #define LogInfo( message, ... ) ESP_LOGI( LIBRARY_LOG_NAME, REMOVE_PARENS( message ), ##__VA_ARGS__ )
+#else
+    #define LogInfo( message, ... )
 #endif
 
 #if CONFIG_AWS_OTA_LOG_DEBUG
     #define LogDebug( message, ... ) ESP_LOGD( LIBRARY_LOG_NAME, REMOVE_PARENS( message ), ##__VA_ARGS__ )
+#else
+    #define LogDebug( message, ... )
 #endif
 
 /************ End of logging configuration ****************/
-
-/**
- * @brief Log base 2 of the size of the file data block message (excluding the header).
- *
- * 10 bits yields a data block size of 1KB.
- */
-#define otaconfigLOG2_FILE_BLOCK_SIZE           CONFIG_LOG2_FILE_BLOCK_SIZE
 
 /**
  * @brief Size of the file data block message (excluding the header).
@@ -183,6 +189,9 @@
  * Note - Only MQTT is supported at this time for control operations.
  */
 #define configENABLED_CONTROL_PROTOCOL          ( OTA_CONTROL_OVER_MQTT )
+
+#define CONFIG_OTA_DATA_OVER_MQTT 1
+#define CONFIG_OTA_PRIMARY_DATA_PROTOCOL  1
 
 /**
  * @brief The protocol selected for OTA data operations.

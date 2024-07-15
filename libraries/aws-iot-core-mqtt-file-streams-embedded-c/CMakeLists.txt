@@ -1,5 +1,5 @@
 # This gives OTA_INCLUDE_PUBLIC_DIRS, and OTA_SOURCES
-include(${CMAKE_CURRENT_LIST_DIR}/ota-for-aws-iot-embedded-sdk/otaFilePaths.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/aws-iot-core-mqtt-file-streams-embedded-c/mqttFileDownloaderFilePaths.cmake)
 
 set(AWS_OTA_PORT_INCLUDE_DIRS
     ${CMAKE_CURRENT_LIST_DIR}/port
@@ -7,7 +7,7 @@ set(AWS_OTA_PORT_INCLUDE_DIRS
 )
 
 set(AWS_OTA_INCLUDE_DIRS
-    ${OTA_INCLUDE_PUBLIC_DIRS}
+    ${MQTT_FILE_DOWNLOADER_INCLUDES}
     ${CMAKE_CURRENT_LIST_DIR}/config
     ${AWS_OTA_PORT_INCLUDE_DIRS}
 )
@@ -19,9 +19,7 @@ set(AWS_OTA_PORT_SRCS
 )
 
 set(AWS_OTA_SRCS
-    ${OTA_SOURCES}
-    ${OTA_MQTT_SOURCES}
-    ${OTA_HTTP_SOURCES}
+    ${MQTT_FILE_DOWNLOADER_SOURCES}
     ${AWS_OTA_PORT_SRCS}
 )
 
@@ -32,6 +30,7 @@ set(AWS_OTA_REQUIRES
     coreJSON
     esp_common
     spi_flash
+    Jobs-for-AWS-IoT-embedded-sdk
     bootloader_support
     efuse
     log
@@ -51,5 +50,5 @@ idf_component_register(
 )
 
 set_source_files_properties(
-"${CMAKE_CURRENT_LIST_DIR}/ota-for-aws-iot-embedded-sdk/source/ota.c"
+"${CMAKE_CURRENT_LIST_DIR}/aws-iot-core-mqtt-file-streams-embedded-c/source/MQTTFileDownloader.c"
 PROPERTIES COMPILE_FLAGS -Wno-format)

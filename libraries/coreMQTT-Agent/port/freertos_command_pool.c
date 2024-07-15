@@ -102,10 +102,10 @@ MQTTAgentCommand_t * Agent_GetCommand( uint32_t blockTimeMs )
 
     if( !structRetrieved )
     {
-        LogError( ( "No command structure available." ) );
+        //LogError( ( "No command structure available." ) );
     } else {
-        LogDebug( ( "Removed Command Context %d from pool",
-                    ( int ) ( structToUse - commandStructurePool ) ) );
+        //LogDebug( ( "Removed Command Context %d from pool",
+        //            ( int ) ( structToUse - commandStructurePool ) ) );
     }
 
     return structToUse;
@@ -128,8 +128,8 @@ bool Agent_ReleaseCommand( MQTTAgentCommand_t * pCommandToRelease )
         /* The send should not fail as the queue was created to hold every command
          * in the pool. */
         configASSERT( structReturned );
-        LogDebug( ( "Returned Command Context %d to pool",
-                    ( int ) ( pCommandToRelease - commandStructurePool ) ) );
+        //LogDebug( ( "Returned Command Context %d to pool",
+        //            ( int ) ( pCommandToRelease - commandStructurePool ) ) );
     }
 
     return structReturned;

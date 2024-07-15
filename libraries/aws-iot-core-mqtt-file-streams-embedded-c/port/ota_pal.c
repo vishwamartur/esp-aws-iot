@@ -22,9 +22,10 @@
 #include <stdint.h>
 #include <string.h>
 #include <sys/param.h>
-#include "ota.h"
+
+#include "ota_config.h"
+
 #include "ota_pal.h"
-#include "ota_interface_private.h"
 #include "ota_config.h"
 
 #include "iot_crypto.h"
@@ -43,7 +44,7 @@
 #include "soc/pmu_reg.h"
 #endif
 
-#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL( 5, 0, 0 )
     #include "spi_flash_mmap.h"    
 #else
     #include "esp_spi_flash.h"
@@ -76,7 +77,7 @@
 typedef struct
 {
     const esp_partition_t * update_partition;
-    const OtaFileContext_t * cur_ota;
+    const AfrOtaJobDocumentFields_t * cur_ota;
     esp_ota_handle_t update_handle;
     uint32_t data_write_len;
     bool valid_image;
@@ -105,9 +106,9 @@ static CK_RV prvGetCertificate( const char * pcLabelName,
                                 uint8_t ** ppucData,
                                 uint32_t * pulDataSize );
 
-static OtaPalMainStatus_t asn1_to_raw_ecdsa( uint8_t * signature,
-                                             uint16_t sig_len,
-                                             uint8_t * out_signature )
+static OtaPalStatus_t asn1_to_raw_ecdsa( uint8_t * signature,
+                                         uint16_t sig_len,
+                                         uint8_t * out_signature )
 {
     int ret = 0;
     const unsigned char * end = signature + sig_len;
@@ -178,7 +179,7 @@ static void _esp_ota_ctx_close( AfrOtaJobDocumentFields_t * pFileContext )
 {
     if( pFileContext != NULL )
     {
-        pFileContext->pFile = 0;
+        pFileContext->fileId = 0;
     }
 
     /*memset(&ota_ctx, 0, sizeof(esp_ota_context_t)); */
@@ -195,7 +196,7 @@ OtaPalStatus_t otaPal_Abort( AfrOtaJobDocumentFields_t * const pFileContext )
         _esp_ota_ctx_close( pFileContext );
         ota_ret = OtaPalSuccess;
     }
-    else if( pFileContext && ( pFileContext->pFile == NULL ) )
+    else if( pFileContext && ( pFileContext->fileId == 0 ) )
     {
         ota_ret = OtaPalSuccess;
     }
@@ -211,6 +212,14 @@ OtaPalStatus_t otaPal_CreateFileForRx( AfrOtaJobDocumentFields_t * const pFileCo
         return OtaPalRxFileCreateFailed;
     }
 
+    if( otaPal_SetPlatformImageState( pFileContext, OtaImageStateAccepted ) == OtaPalSuccess )
+    {
+        /* This demo just accepts the image. But if the application wants to
+         * verify any more details about it can be done here. Once verified,
+         * the success message can be sent to IoT core. */
+        return OtaPalNewImageBooted;
+    }
+
     const esp_partition_t * update_partition = esp_ota_get_next_update_partition( NULL );
 
     if( update_partition == NULL )
@@ -219,7 +228,7 @@ OtaPalStatus_t otaPal_CreateFileForRx( AfrOtaJobDocumentFields_t * const pFileCo
         return OtaPalRxFileCreateFailed;
     }
 
-    LogInfo( ( "Writing to partition subtype %d at offset 0x%"PRIx32"",
+    LogInfo( ( "Writing to partition subtype %d at offset 0x%" PRIx32 "",
                update_partition->subtype, update_partition->address ) );
 
     esp_ota_handle_t update_handle;
@@ -235,7 +244,6 @@ OtaPalStatus_t otaPal_CreateFileForRx( AfrOtaJobDocumentFields_t * const pFileCo
     ota_ctx.update_partition = update_partition;
     ota_ctx.update_handle = update_handle;
 
-    // pFileContext->pFile = ( uint8_t * ) &ota_ctx;
     ota_ctx.data_write_len = 0;
     ota_ctx.valid_image = false;
 
@@ -424,7 +432,7 @@ OtaPalStatus_t otaPal_CheckFileSignature( AfrOtaJobDocumentFields_t * const pFil
         return OtaPalSignatureCheckFailed;
     }
 
-    pucSignerCert = (uint8_t *)codeSigningCertificatePEM;
+    pucSignerCert = ( uint8_t * ) codeSigningCertificatePEM;
 
     if( pucSignerCert == NULL )
     {
@@ -434,7 +442,7 @@ OtaPalStatus_t otaPal_CheckFileSignature( AfrOtaJobDocumentFields_t * const pFil
     }
     else
     {
-        ulSignerCertSize = strlen(codeSigningCertificatePEM) + 1;
+        ulSignerCertSize = strlen( codeSigningCertificatePEM ) + 1;
     }
 
     mmu_free_pages_count = spi_flash_mmap_get_free_pages( SPI_FLASH_MMAP_DATA );
@@ -467,7 +475,7 @@ OtaPalStatus_t otaPal_CheckFileSignature( AfrOtaJobDocumentFields_t * const pFil
     }
 
     if( CRYPTO_SignatureVerificationFinal( pvSigVerifyContext, ( char * ) pucSignerCert, ulSignerCertSize,
-                                           pFileContext->certfile, pFileContext->certfileLen ) == pdFALSE )
+                                           pFileContext->signature, pFileContext->signatureLen ) == pdFALSE )
     {
         LogError( ( "Signature verification failed." ) );
         result = OtaPalSignatureCheckFailed;
@@ -485,14 +493,14 @@ end:
 /* Close the specified file. This shall authenticate the file if it is marked as secure. */
 OtaPalStatus_t otaPal_CloseFile( AfrOtaJobDocumentFields_t * const pFileContext )
 {
-    OtaPalMainStatus_t mainErr = OtaPalSuccess;
+    OtaPalStatus_t mainErr = OtaPalSuccess;
 
     if( !_esp_ota_ctx_validate( pFileContext ) )
     {
         return OtaPalFileClose;
     }
 
-    if( pFileContext->pSignature == NULL )
+    if( pFileContext->signature == NULL )
     {
         LogError( ( "Image Signature not found" ) );
         _esp_ota_ctx_clear( &ota_ctx );
@@ -521,7 +529,7 @@ OtaPalStatus_t otaPal_CloseFile( AfrOtaJobDocumentFields_t * const pFileContext 
             {
                 memset( sec_boot_sig->sec_ver, 0x00, sizeof( sec_boot_sig->sec_ver ) );
                 memset( sec_boot_sig->pad, 0xFF, sizeof( sec_boot_sig->pad ) );
-                mainErr = asn1_to_raw_ecdsa( pFileContext->pSignature->data, pFileContext->pSignature->size, sec_boot_sig->raw_ecdsa_sig );
+                mainErr = asn1_to_raw_ecdsa( pFileContext->signature, pFileContext->signatureLen, sec_boot_sig->raw_ecdsa_sig );
 
                 if( mainErr == OtaPalSuccess )
                 {
@@ -600,7 +608,7 @@ int16_t otaPal_WriteBlock( AfrOtaJobDocumentFields_t * const pFileContext,
 
         if( ret != ESP_OK )
         {
-            LogError( ( "Couldn't flash at the offset %"PRIu32"", iOffset ) );
+            LogError( ( "Couldn't flash at the offset %" PRIu32 "", iOffset ) );
             return -1;
         }
 
@@ -615,7 +623,7 @@ int16_t otaPal_WriteBlock( AfrOtaJobDocumentFields_t * const pFileContext,
     return iBlockSize;
 }
 
-OtaPalImageState_t otaPal_GetPlatformImageState( OtaFileContext_t * const pFileContext )
+OtaPalImageState_t otaPal_GetPlatformImageState( AfrOtaJobDocumentFields_t * const pFileContext )
 {
     OtaPalImageState_t eImageState = OtaPalImageStateUnknown;
     uint32_t ota_flags;
@@ -665,21 +673,21 @@ static void disable_rtc_wdt()
     LogInfo( ( "Disabling RTC hardware watchdog timer" ) );
 
     wdt_hal_context_t rtc_wdt_ctx = 
-#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 1, 0)
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL( 5, 1, 0 )
     RWDT_HAL_CONTEXT_DEFAULT();
 #else
-    {.inst = WDT_RWDT, .rwdt_dev = &RTCCNTL};
+    { .inst = WDT_RWDT, .rwdt_dev = &RTCCNTL };
 #endif
 
-    wdt_hal_write_protect_disable(&rtc_wdt_ctx);
-    wdt_hal_disable(&rtc_wdt_ctx);
-    wdt_hal_write_protect_enable(&rtc_wdt_ctx);
+    wdt_hal_write_protect_disable( &rtc_wdt_ctx );
+    wdt_hal_disable( &rtc_wdt_ctx );
+    wdt_hal_write_protect_enable( &rtc_wdt_ctx );
 }
 
-OtaPalStatus_t otaPal_SetPlatformImageState( OtaFileContext_t * const pFileContext,
+OtaPalStatus_t otaPal_SetPlatformImageState( AfrOtaJobDocumentFields_t * const pFileContext,
                                              OtaImageState_t eState )
 {
-    OtaPalMainStatus_t mainErr = OtaPalSuccess;
+    OtaPalStatus_t mainErr = OtaPalSuccess;
     int state;
 
     ( void ) pFileContext;
@@ -728,6 +736,7 @@ OtaPalStatus_t otaPal_SetPlatformImageState( OtaFileContext_t * const pFileConte
     {
         if( ota_flags == ESP_OTA_IMG_PENDING_VERIFY )
         {
+            LogInfo( ( "Image is pending verification." ) );
             ret = aws_esp_ota_set_boot_flags( state, true );
 
             if( ret != ESP_OK )
@@ -743,8 +752,8 @@ OtaPalStatus_t otaPal_SetPlatformImageState( OtaFileContext_t * const pFileConte
         }
         else
         {
-            LogWarn( ( "Image not in self test mode %"PRIu32"", ota_flags ) );
-            mainErr = ota_flags == ESP_OTA_IMG_VALID ? OtaPalSuccess : OtaPalCommitFailed;
+            LogWarn( ( "Image not in self test mode %" PRIu32 "", ota_flags ) );
+            mainErr = OtaPalCommitFailed; /*ota_flags == ESP_OTA_IMG_VALID ? OtaPalSuccess : OtaPalCommitFailed; */
         }
 
         /* For debug purpose only, get current flags */
@@ -776,42 +785,44 @@ OtaPalStatus_t otaPal_SetPlatformImageState( OtaFileContext_t * const pFileConte
     return mainErr;
 }
 
-static const esp_partition_t* get_running_firmware(void)
+static const esp_partition_t * get_running_firmware( void )
 {
-    const esp_partition_t *configured = esp_ota_get_boot_partition();
-    const esp_partition_t *running = esp_ota_get_running_partition();
-    ESP_LOGI(TAG, "Running partition type %d subtype %d (offset 0x%08"PRIx32")",
-            running->type, running->subtype, running->address);
-    ESP_LOGI(TAG, "Configured partition type %d subtype %d (offset 0x%08"PRIx32")",
-            configured->type, configured->subtype, configured->address);
+    const esp_partition_t * configured = esp_ota_get_boot_partition();
+    const esp_partition_t * running = esp_ota_get_running_partition();
+
+    ESP_LOGI( TAG, "Running partition type %d subtype %d (offset 0x%08" PRIx32 ")",
+              running->type, running->subtype, running->address );
+    ESP_LOGI( TAG, "Configured partition type %d subtype %d (offset 0x%08" PRIx32 ")",
+              configured->type, configured->subtype, configured->address );
     return running;
 }
 
-esp_err_t otaPal_EraseLastBootPartition(void)
+esp_err_t otaPal_EraseLastBootPartition( void )
 {
-    const esp_partition_t *cur_app = get_running_firmware();
-    ESP_LOGI(TAG, "Current running firmware is: %s",cur_app->label);
-    return(esp_ota_erase_last_boot_app_partition());
+    const esp_partition_t * cur_app = get_running_firmware();
+
+    ESP_LOGI( TAG, "Current running firmware is: %s", cur_app->label );
+    return( esp_ota_erase_last_boot_app_partition() );
 }
 
-bool otaPal_SetCodeSigningCertificate(const char * pcCodeSigningCertificatePEM)
+bool otaPal_SetCodeSigningCertificate( const char * pcCodeSigningCertificatePEM )
 {
     bool xRet = true;
 
-    if(codeSigningCertificatePEM != NULL)
+    if( codeSigningCertificatePEM != NULL )
     {
-        vPortFree(codeSigningCertificatePEM);
+        vPortFree( codeSigningCertificatePEM );
     }
 
-    codeSigningCertificatePEM = pvPortMalloc(strlen(pcCodeSigningCertificatePEM) + 1);
+    codeSigningCertificatePEM = pvPortMalloc( strlen( pcCodeSigningCertificatePEM ) + 1 );
 
-    if(codeSigningCertificatePEM == NULL)
+    if( codeSigningCertificatePEM == NULL )
     {
         xRet = false;
     }
     else
     {
-        strcpy(codeSigningCertificatePEM, pcCodeSigningCertificatePEM);
+        strcpy( codeSigningCertificatePEM, pcCodeSigningCertificatePEM );
     }
 
     return xRet;
