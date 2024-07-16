@@ -142,7 +142,7 @@ extern const char pcAwsCodeSigningCertPem[] asm("_binary_aws_codesign_crt_start"
 /**
  * @brief Period for demo loop sleep in milliseconds.
  */
-#define OTA_EXAMPLE_LOOP_SLEEP_PERIOD_MS    ( 5U )
+#define OTA_EXAMPLE_LOOP_SLEEP_PERIOD_MS    ( 20U )
 
 /**
  * @brief Size of the network buffer to receive the MQTT message.
@@ -1207,6 +1207,7 @@ static int establishConnection( void )
             LogError( ( "Failed creating an MQTT connection to %.*s.",
                         AWS_IOT_ENDPOINT_LENGTH,
                         AWS_IOT_ENDPOINT ) );
+            xTlsDisconnect(&networkContext);
         }
         else
         {
@@ -1573,6 +1574,8 @@ static void * otaThread( void * pParam )
     return NULL;
 }
 /*-----------------------------------------------------------*/
+uint32_t otaPacketsReceived_prev = 0;
+
 static int startOTADemo( void )
 {
     /* Status indicating a successful demo or not. */
@@ -1707,7 +1710,13 @@ static int startOTADemo( void )
                                otaStatistics.otaPacketsDropped ) );
 
                     /* Delay to allow data to buffer for MQTT_ProcessLoop. */
-                    Clock_SleepMs( OTA_EXAMPLE_LOOP_SLEEP_PERIOD_MS );
+
+                    if (otaStatistics.otaPacketsReceived == otaPacketsReceived_prev) {
+                        Clock_SleepMs( OTA_EXAMPLE_LOOP_SLEEP_PERIOD_MS );
+                    }
+
+                    otaPacketsReceived_prev = otaStatistics.otaPacketsReceived;
+
                 }
                 else
                 {

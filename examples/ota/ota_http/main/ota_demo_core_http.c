@@ -1337,6 +1337,7 @@ static int establishConnection( void )
             LogError( ( "Failed creating an MQTT connection to %.*s.",
                         AWS_IOT_ENDPOINT_LENGTH,
                         AWS_IOT_ENDPOINT ) );
+            xTlsDisconnect( &networkContextMqtt );
         }
         else
         {

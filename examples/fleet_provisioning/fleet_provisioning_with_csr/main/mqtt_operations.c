@@ -853,6 +853,7 @@ bool EstablishMqttSession( MQTTPublishCallback_t publishCallback,
                     returnStatus = false;
                     LogError( ( "Connection with MQTT broker failed with status %s.",
                                 MQTT_Status_strerror( mqttStatus ) ) );
+                    Mbedtls_Pkcs11_Disconnect(pNetworkContext);
                 }
                 else
                 {
