@@ -1,3 +1,0 @@
-key,type,encoding,value
-creds,namespace,,
-P11_CSK,file,string,./main/certs/P11_CSK.crt
