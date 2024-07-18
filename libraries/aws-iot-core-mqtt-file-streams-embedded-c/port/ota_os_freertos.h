@@ -179,50 +179,6 @@ OtaOsStatus_t OtaReceiveEvent_FreeRTOS( void * pEventMsg );
  */
 OtaOsStatus_t OtaDeinitEvent_FreeRTOS( void );
 
-#if 0
-/**
- * @brief Start timer.
- *
- * This function starts the timer or resets it if it is already started on FreeRTOS platforms.
- *
- * @param[otaTimerId]       Timer ID of type otaTimerId_t.
- *
- * @param[pTimerName]       Timer name.
- *
- * @param[timeout]          Timeout for the timer.
- *
- * @param[callback]         Callback to be called when timer expires.
- *
- * @return                  OtaOsStatus_t, OtaOsSuccess if success , other error code on failure.
- */
-OtaOsStatus_t OtaStartTimer_FreeRTOS( OtaTimerId_t otaTimerId,
-                                      const char * const pTimerName,
-                                      const uint32_t timeout,
-                                      OtaTimerCallback_t callback );
-
-/**
- * @brief Stop timer.
- *
- * This function stops the timer on FreeRTOS platforms.
- *
- * @param[otaTimerId]     Timer ID of type otaTimerId_t.
- *
- * @return                OtaOsStatus_t, OtaOsSuccess if success , other error code on failure.
- */
-OtaOsStatus_t OtaStopTimer_FreeRTOS( OtaTimerId_t otaTimerId );
-
-/**
- * @brief Delete a timer.
- *
- * This function deletes a timer for POSIX platforms.
- *
- * @param[otaTimerId]       Timer ID of type otaTimerId_t.
- *
- * @return                  OtaOsStatus_t, OtaOsSuccess if success , other error code on failure.
- */
-OtaOsStatus_t OtaDeleteTimer_FreeRTOS( OtaTimerId_t otaTimerId );
-#endif
-
 /**
  * @brief Allocate memory.
  *
