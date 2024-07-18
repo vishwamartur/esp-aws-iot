@@ -23,7 +23,7 @@ This SDK enables AWS IoT cloud connectivity with ESP32-based platforms using the
   > **Note**: Please read [Support Policy](#support-policy) below for more details.
 - Please refer to the [example README](examples/README.md) for more information on setting up examples.
 - For a production-ready starting point for making applications that connect to AWS IoT Core using `esp-aws-iot`, refer to the [reference example](https://github.com/FreeRTOS/iot-reference-esp32c3).
-- Please refer to the [Security Guide](examples/ota/SecurityGuide.md) for steps to enable Security Features on your Espressif chip. 
+- Please refer to the [Security Guide](https://github.com/espressif/esp-aws-iot/blob/release/202210.01-LTS/examples/ota/SecurityGuide.md) for steps to enable Security Features on your Espressif chip.
   - This SDK supports multiple ways to securely store the PKI credentials.
   - The default method is to use PKI credentials which are embedded in the binary, using the certs from the `certs/` in every example. 
   - For using Secure Element (ATECC608A), you will need to use [esp-cryptoauthlib](https://github.com/espressif/esp-cryptoauthlib#how-to-use-esp-cryptoauthlib-with-esp-idf).
