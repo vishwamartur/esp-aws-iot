@@ -32,20 +32,19 @@ This SDK enables AWS IoT cloud connectivity with ESP32-based platforms using the
 ## Supported SoCs
 
 The following table shows esp-aws-iot support with the ESP-IDF support of Espressif SoCs:  
-![alt text][supported] and ![alt text][unsupported] denote supported and unsupported status, respectively.  
+Cell marked as ![alt text][supported] denotes supported combination.
 
 <table>
 <thead>
    <tr align="center">
     <th rowspan="2">SoC</th>
     <th rowspan="2">Supported IDF Version</th>
-    <th colspan="4">esp-aws-iot Release</th>
+    <th rowspan="2"><a href="https://github.com/espressif/esp-aws-iot/tree/master">master</a></th>
+    <th colspan="2">esp-aws-iot Release</th>
   </tr>
    <tr align="center">
-    <th><a href="https://github.com/espressif/esp-aws-iot/tree/release/202012.04-LTS">202012.04-LTS</a></th>
-    <th><a href="https://github.com/espressif/esp-aws-iot/tree/release/202210.01-LTS">202210.01-LTS</a></th>
     <th><a href="https://github.com/espressif/esp-aws-iot/tree/release/202406.01-LTS">202406.01-LTS</a></th>
-    <th><a href="https://github.com/espressif/esp-aws-iot/tree/master" target="_blank" rel="noopener noreferrer">master branch</a></th>
+    <th><a href="https://github.com/espressif/esp-aws-iot/tree/release/202210.01-LTS">202210.01-LTS</a></th>
   </tr>
 </thead>
 <tbody>
@@ -55,28 +54,24 @@ The following table shows esp-aws-iot support with the ESP-IDF support of Espres
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
-    <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
    </tr>
    <tr align="center">
     <td>IDF v5.0</td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
    </tr>
    <tr align="center">
     <td>IDF v5.1</td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
    </tr>
    <tr align="center">
     <td>IDF v5.2</td>
-    <td></td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
+    <td></td>
    </tr>
    <tr align="center">
     <td rowspan="4">ESP32-S2</td>
@@ -84,28 +79,24 @@ The following table shows esp-aws-iot support with the ESP-IDF support of Espres
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
-    <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
    </tr>
    <tr align="center">
     <td>IDF v5.0</td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
    </tr>
    <tr align="center">
     <td>IDF v5.1</td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
    </tr>
    <tr align="center">
     <td>IDF v5.2</td>
-    <td></td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
+    <td></td>
    </tr>
    <tr align="center">
     <td rowspan="4">ESP32-C3</td>
@@ -113,28 +104,24 @@ The following table shows esp-aws-iot support with the ESP-IDF support of Espres
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
-    <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
    </tr>
    <tr align="center">
     <td>IDF v5.0</td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
    </tr>
    <tr align="center">
     <td>IDF v5.1</td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
   </tr>
   <tr align="center">
     <td>IDF v5.2</td>
-    <td></td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
+    <td></td>
   </tr>
    <tr align="center">
     <td rowspan="4">ESP32-S3</td>
@@ -142,71 +129,61 @@ The following table shows esp-aws-iot support with the ESP-IDF support of Espres
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
-    <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
   </tr>
    <tr align="center">
     <td>IDF v5.0</td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
   </tr>
    <tr align="center">
     <td>IDF v5.1</td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
   </tr>
   <tr align="center">
     <td>IDF v5.2</td>
-    <td></td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
+    <td></td>
   </tr>
    <tr align="center">
     <td rowspan="3">ESP32-C2</td>
     <td>IDF v5.0</td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
   </tr>
    <tr align="center">
     <td>IDF v5.1</td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
   </tr>
   <tr align="center">
     <td>IDF v5.2</td>
-    <td></td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
+    <td></td>
   </tr>
    <tr align="center">
     <td rowspan="2">ESP32-C6</td>
     <td>IDF v5.1</td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
   </tr>
   <tr align="center">
     <td>IDF v5.2</td>
-    <td></td>
-    <td></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
     <td><img src="https://img.shields.io/badge/-supported-green" alt="Image" width="65" height="20"></td>
+    <td></td>
   </tr>
 </tbody>
 </table>
 
 [supported]: https://img.shields.io/badge/-supported-green "supported"
-[unsupported]: https://img.shields.io/badge/-unsupported-red "unsupported"
 
 ## Support Policy
 
