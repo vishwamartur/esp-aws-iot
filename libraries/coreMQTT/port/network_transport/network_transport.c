@@ -202,7 +202,7 @@ int32_t espTlsTransportSend( NetworkContext_t* pxNetworkContext,
 int32_t espTlsTransportRecv( NetworkContext_t* pxNetworkContext,
                              void* pvData, size_t uxDataLen )
 {
-    int32_t lBytesRead = 0;
+    int32_t lBytesRead = -1;
 
     if( ( pvData != NULL ) &&
         ( uxDataLen > 0 ) &&
@@ -221,6 +221,8 @@ int32_t espTlsTransportRecv( NetworkContext_t* pxNetworkContext,
             int lSockFd = -1;
             fd_set read_fds;
             fd_set error_fds;
+
+            lBytesRead = 0;
 
             esp_tls_get_conn_sockfd( pxNetworkContext->pxTls, &lSockFd );
             FD_ZERO( &read_fds );
